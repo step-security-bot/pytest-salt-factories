@@ -20,16 +20,21 @@ jobs:
   Pre-Commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
     - uses: ./.github/actions/setup-actionlint
     - uses: ./.github/actions/setup-shellcheck
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
       with:
         python-version: 3.9
     - name: Set Cache Key
       run: echo "PY=$(python --version --version | sha256sum | cut -d' ' -f1)" >> "$GITHUB_ENV"
-    - uses: actions/cache@v3
+    - uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
       with:
         path: ~/.cache/pre-commit
         key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}|${{ hashFiles('.pre-commit-hooks/*') }}
@@ -48,12 +53,17 @@ jobs:
     timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       with:
         fetch-depth: 0
 
     - name: Set up Python 3.9 For Nox
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
       with:
         python-version: 3.9
 
@@ -80,10 +90,15 @@ jobs:
     timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
 
     - name: Set up Python 3.9 For Nox
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
       with:
         python-version: 3.9
 
@@ -118,7 +133,12 @@ jobs:
           - "3005"
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       with:
         fetch-depth: 0
 
@@ -149,7 +169,7 @@ jobs:
         sudo -E nox --force-color -e tests --no-venv -- -vv tests/
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -160,7 +180,7 @@ jobs:
         verbose: true
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -173,7 +193,7 @@ jobs:
 
     - name: Upload Logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: runtests-${{ runner.os }}-Salt-${{ matrix.salt-version }}-System-Pytest${{ matrix.pytest-version }}.log
         path: artifacts/runtests-*.log
@@ -200,12 +220,17 @@ jobs:
           - "7.4.0"
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       with:
         fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -235,7 +260,7 @@ jobs:
         nox --force-color -e tests-${{ matrix.python-version }} -- -vv tests/
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -246,7 +271,7 @@ jobs:
         verbose: true
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -259,7 +284,7 @@ jobs:
 
     - name: Upload Logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: runtests-${{ runner.os }}-Salt-${{ matrix.salt-version }}-Py${{ matrix.python-version}}-Pytest${{ matrix.pytest-version }}.log
         path: artifacts/runtests-*.log
@@ -285,12 +310,17 @@ jobs:
           - "7.4.0"
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       with:
         fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -316,7 +346,7 @@ jobs:
         nox --force-color -e tests-${{ matrix.python-version }} -- -vv tests/
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -327,7 +357,7 @@ jobs:
         verbose: true
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -340,7 +370,7 @@ jobs:
 
     - name: Upload Logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: runtests-${{ runner.os }}-Salt-${{ matrix.salt-version }}-Py${{ matrix.python-version}}-Pytest${{ matrix.pytest-version }}.log
         path: artifacts/runtests-*.log
@@ -371,12 +401,17 @@ jobs:
           - {"python-version": "3.10", "salt-version": "3005.0"}
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       with:
         fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -402,7 +437,7 @@ jobs:
         nox --force-color -e tests-${{ matrix.python-version }} -- -vv --sys-stats tests/
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -413,7 +448,7 @@ jobs:
         verbose: true
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@eaaf4bedf32dbdc6b720b63067d99c4d77d6047d # v3.1.4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         directory: artifacts/
@@ -426,7 +461,7 @@ jobs:
 
     - name: Upload Logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: runtests-${{ runner.os }}-Salt-${{ matrix.salt-version }}-Py${{ matrix.python-version}}-Pytest${{ matrix.pytest-version }}.log
         path: artifacts/runtests-*.log
@@ -445,11 +480,16 @@ jobs:
       - MacOS
       - Linux-System-Service
     steps:
-    - uses: actions/checkout@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
       with:
         fetch-depth: 0
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
       with:
         python-version: 3.9
 
@@ -463,7 +503,7 @@ jobs:
 
     - name: Publish distribution 📦 to Test PyPI
       if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@release/v1
+      uses: pypa/gh-action-pypi-publish@f8c70e705ffc13c3b4d1221169b84f12a75d6ca8 # release/v1
       with:
         repository-url: https://test.pypi.org/legacy/
         print-hash: true
@@ -486,9 +526,14 @@ jobs:
       - Linux-System-Service
       - Build
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+        with:
+          egress-policy: audit
+
       - name: Get workflow information
         id: get-workflow-info
-        uses: technote-space/workflow-conclusion-action@v3
+        uses: technote-space/workflow-conclusion-action@45ce8e0eb155657ab8ccf346ade734257fd196a5 # v3.0.3
 
       - name: Set Pipeline Exit Status
         shell: bash
